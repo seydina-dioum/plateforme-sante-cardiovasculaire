@@ -3,3 +3,6 @@ values:
   - key: base_ur;
     enabled: true
     value: ''
+  - key: auth_token
+    enabled: true
+    value: ''
