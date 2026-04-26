@@ -1,0 +1,55 @@
+$kind: http-request
+name: Register
+method: POST
+url: '{{base_url}}/api/register'
+order: 1000
+headers:
+  - key: Content-Type
+    value: application/json
+  - key: Accept
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "Test User",
+      "email": "testuser@example.com",
+      "password": "password123",
+      "password_confirmation": "password123"
+    }
+auth:
+  type: noauth
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      // Test: Status 201 Created
+      pm.test("Status code is 201", function () {
+          pm.response.to.have.status(201);
+      });
+
+      // Test: Response has access_token
+      pm.test("Response contains access_token", function () {
+          const json = pm.response.json();
+          pm.expect(json).to.have.property("access_token");
+          pm.expect(json.access_token).to.be.a("string").and.not.empty;
+      });
+
+      // Test: Response has user object
+      pm.test("Response contains user object", function () {
+          const json = pm.response.json();
+          pm.expect(json).to.have.property("user");
+          pm.expect(json.user).to.have.property("email");
+      });
+
+      // Test: token_type is Bearer
+      pm.test("Token type is Bearer", function () {
+          const json = pm.response.json();
+          pm.expect(json.token_type).to.eql("Bearer");
+      });
+
+      // Auto-save token to environment
+      const json = pm.response.json();
+      if (json.access_token) {
+          pm.environment.set("auth_token", json.access_token);
+      }

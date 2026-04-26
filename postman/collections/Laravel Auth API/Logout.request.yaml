@@ -1,0 +1,26 @@
+$kind: http-request
+name: Logout
+method: POST
+url: '{{base_url}}/api/logout'
+order: 4000
+headers:
+  - key: Accept
+    value: application/json
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      // Test: Status 200 OK
+      pm.test("Status code is 200", function () {
+          pm.response.to.have.status(200);
+      });
+
+      // Test: Response has success message
+      pm.test("Response contains logout message", function () {
+          const json = pm.response.json();
+          pm.expect(json).to.have.property("message");
+          pm.expect(json.message).to.be.a("string").and.not.empty;
+      });
+
+      // Clear token from environment after logout
+      pm.environment.unset("auth_token");
