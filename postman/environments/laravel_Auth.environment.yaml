@@ -1,0 +1,5 @@
+name: laravel_Auth
+values:
+  - key: base_ur;
+    enabled: true
+    value: ''
