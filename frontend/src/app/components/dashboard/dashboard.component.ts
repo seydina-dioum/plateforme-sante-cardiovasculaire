@@ -76,73 +76,27 @@ import { ChartConfiguration, ChartOptions } from 'chart.js';
     </div>
   `,
   styles: [`
-    .dashboard {
-      display: flex;
-      height: 100vh;
-      background-color: #f8f9fa;
-      font-family: 'Inter', sans-serif;
-    }
-    .sidebar {
-      width: 250px;
-      background-color: #2c3e50;
-      color: white;
-      display: flex;
-      flex-direction: column;
-    }
-    .sidebar-header {
-      padding: 2rem 1.5rem;
-      border-bottom: 1px solid #34495e;
-    }
+    .dashboard { display: flex; height: 100vh; background-color: #f8f9fa; font-family: 'Inter', sans-serif; }
+    .sidebar { width: 250px; background-color: #2c3e50; color: white; display: flex; flex-direction: column; }
+    .sidebar-header { padding: 2rem 1.5rem; border-bottom: 1px solid #34495e; }
     .sidebar-header h2 { margin: 0; font-size: 1.5rem; }
     .sidebar-header p { margin: 0; color: #adb5bd; font-size: 0.9rem; }
-    
-    .nav-links {
-      list-style: none;
-      padding: 0;
-      margin: 2rem 0;
-      flex-grow: 1;
-    }
+    .nav-links { list-style: none; padding: 0; margin: 2rem 0; flex-grow: 1; }
     .nav-links li { padding: 0.8rem 1.5rem; }
     .nav-links li.active { background-color: #34495e; border-left: 4px solid #3498db; }
     .nav-links a { color: white; text-decoration: none; display: flex; justify-content: space-between; }
     .badge { background: #e74c3c; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem; }
-    
     .sidebar-footer { padding: 1.5rem; }
     .btn-logout { width: 100%; padding: 0.8rem; background: #c0392b; color: white; border: none; border-radius: 4px; cursor: pointer; }
-    
-    .main-content {
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-      overflow-y: auto;
-    }
-    .topbar {
-      background: white;
-      padding: 1.5rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
+    .main-content { flex-grow: 1; display: flex; flex-direction: column; overflow-y: auto; }
+    .topbar { background: white; padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
     .topbar h1 { margin: 0; font-size: 1.5rem; color: #2c3e50; }
-    
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.5rem;
-      padding: 2rem;
-    }
-    .stat-card {
-      background: white;
-      padding: 1.5rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
+    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; padding: 2rem; }
+    .stat-card { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
     .stat-card h3 { margin: 0 0 1rem 0; color: #7f8c8d; font-size: 1rem; }
     .stat-card .value { font-size: 2.5rem; font-weight: bold; color: #2c3e50; }
     .text-danger { color: #e74c3c !important; }
     .text-warning { color: #f39c12 !important; }
-
     .charts-section {
       display: grid;
       grid-template-columns: 1fr 2fr;
@@ -192,9 +146,7 @@ export class DashboardComponent implements OnInit {
     ]
   };
 
-  ngOnInit(): void {
-    // Initialisation
-  }
+  ngOnInit(): void {}
 
   logout() {
     this.authService.logout();
