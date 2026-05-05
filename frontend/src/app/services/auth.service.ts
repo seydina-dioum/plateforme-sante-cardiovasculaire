@@ -25,21 +25,10 @@ export class AuthService {
   }
 
   login(credentials: any): Observable<any> {
-    // MOCK LOGIN : Simulation du backend pour pouvoir tester l'interface
-    const mockResponse = {
-      token: 'fake-jwt-token-12345',
-      user: {
-        id: 1,
-        name: 'Dr. Doucouré',
-        email: credentials.email || 'medecin@cardiohealth.com'
-      }
-    };
-
-    return of(mockResponse).pipe(
-      delay(800), // Simulation du temps de chargement
+    return this.http.post<any>(`${this.apiUrl}/login`, credentials).pipe(
       tap(response => {
-        if (response && response.token) {
-          localStorage.setItem('token', response.token);
+        if (response && response.access_token) {
+          localStorage.setItem('token', response.access_token);
           localStorage.setItem('user', JSON.stringify(response.user));
           this.currentUserSubject.next(response.user);
         }
