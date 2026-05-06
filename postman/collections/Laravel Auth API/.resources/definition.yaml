@@ -1,0 +1,11 @@
+$kind: collection
+name: Laravel Auth API
+description: 'Collection to test Laravel Sanctum authentication endpoints (register, login, logout, me)'
+auth:
+  type: bearer
+  credentials:
+    - key: token
+      value: '{{auth_token}}'
+variables:
+  - key: base_url
+    value: 'http://127.0.0.1:8000'

@@ -1,0 +1,35 @@
+$kind: http-request
+name: Me
+method: GET
+url: '{{base_url}}/api/me'
+order: 3000
+headers:
+  - key: Accept
+    value: application/json
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      // Test: Status 200 OK
+      pm.test("Status code is 200", function () {
+          pm.response.to.have.status(200);
+      });
+
+      // Test: Response has user id
+      pm.test("Response contains user id", function () {
+          const json = pm.response.json();
+          pm.expect(json).to.have.property("id");
+      });
+
+      // Test: Response has user email
+      pm.test("Response contains user email", function () {
+          const json = pm.response.json();
+          pm.expect(json).to.have.property("email");
+          pm.expect(json.email).to.be.a("string").and.not.empty;
+      });
+
+      // Test: Response has user name
+      pm.test("Response contains user name", function () {
+          const json = pm.response.json();
+          pm.expect(json).to.have.property("name");
+      });
