@@ -1,90 +1,131 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
+import { NbCardModule, NbInputModule, NbButtonModule, NbAlertModule, NbSpinnerModule, NbIconModule } from '@nebular/theme';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, NbCardModule, NbInputModule, NbButtonModule, NbAlertModule, NbSpinnerModule, NbIconModule],
   template: `
-    <div class="login-container">
-      <div class="login-card">
-        <h2>CardioHealth - Médecin</h2>
-        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-          <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" formControlName="email" class="form-control" placeholder="medecin@cardiohealth.com">
-          </div>
-          <div class="form-group">
-            <label for="password">Mot de passe</label>
-            <input type="password" id="password" formControlName="password" class="form-control" placeholder="••••••••">
-          </div>
-          <button type="submit" class="btn-primary" [disabled]="loginForm.invalid || isLoading">
-            {{ isLoading ? 'Connexion...' : 'Se connecter' }}
-          </button>
-          <div *ngIf="errorMessage" class="error-message">
-            {{ errorMessage }}
-          </div>
-        </form>
+    <section class="login-page">
+      <div class="login-wrapper">
+        <div class="login-brand">
+          <span class="brand-icon">❤️</span>
+          <h1>CardioHealth</h1>
+          <p>Plateforme de Suivi Cardiovasculaire</p>
+        </div>
+
+        <nb-card class="login-card">
+          <nb-card-header>
+            <h2>Connexion Médecin</h2>
+          </nb-card-header>
+          <nb-card-body>
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+              <div class="form-group">
+                <label for="email" class="label">Adresse email</label>
+                <input nbInput fullWidth id="email" type="email" formControlName="email"
+                       placeholder="medecin@cardiohealth.com"
+                       [status]="loginForm.get('email')?.touched && loginForm.get('email')?.invalid ? 'danger' : 'basic'">
+              </div>
+
+              <div class="form-group">
+                <label for="password" class="label">Mot de passe</label>
+                <input nbInput fullWidth id="password" type="password" formControlName="password"
+                       placeholder="••••••••"
+                       [status]="loginForm.get('password')?.touched && loginForm.get('password')?.invalid ? 'danger' : 'basic'">
+              </div>
+
+              <nb-alert *ngIf="errorMessage" status="danger" closable (close)="errorMessage = ''">
+                {{ errorMessage }}
+              </nb-alert>
+
+              <button nbButton fullWidth status="primary" size="large" type="submit"
+                      [disabled]="loginForm.invalid || isLoading"
+                      [nbSpinner]="isLoading" nbSpinnerStatus="control">
+                Se connecter
+              </button>
+            </form>
+          </nb-card-body>
+        </nb-card>
       </div>
-    </div>
+    </section>
   `,
   styles: [`
-    .login-container {
+    .login-page {
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      background-color: #f0f2f5;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #e8f0fe 0%, #f4f7fc 50%, #dce6f5 100%);
     }
-    .login-card {
-      background: white;
-      padding: 2rem;
-      border-radius: 8px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+
+    .login-wrapper {
       width: 100%;
-      max-width: 400px;
+      max-width: 420px;
+      padding: 2rem;
     }
-    h2 {
+
+    .login-brand {
       text-align: center;
-      color: #2c3e50;
-      margin-bottom: 1.5rem;
+      margin-bottom: 2rem;
     }
-    .form-group {
-      margin-bottom: 1rem;
-    }
-    label {
+
+    .brand-icon {
+      font-size: 3rem;
       display: block;
       margin-bottom: 0.5rem;
-      color: #4a5568;
     }
-    .form-control {
-      width: 100%;
-      padding: 0.75rem;
-      border: 1px solid #cbd5e0;
-      border-radius: 4px;
-      box-sizing: border-box;
+
+    .login-brand h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1e3a5f;
+      margin: 0;
     }
-    .btn-primary {
-      width: 100%;
-      padding: 0.75rem;
-      background-color: #3182ce;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      font-size: 1rem;
-      cursor: pointer;
-      margin-top: 1rem;
+
+    .login-brand p {
+      color: #718096;
+      font-size: 0.95rem;
+      margin-top: 0.25rem;
     }
-    .btn-primary:disabled {
-      background-color: #a0aec0;
+
+    .login-card {
+      border-radius: 16px !important;
+      box-shadow: 0 8px 30px rgba(30, 58, 95, 0.1) !important;
+      border: none !important;
     }
-    .error-message {
-      color: #e53e3e;
-      margin-top: 1rem;
+
+    nb-card-header h2 {
       text-align: center;
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #2d3748;
+      margin: 0;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .label {
+      display: block;
+      margin-bottom: 0.4rem;
+      font-weight: 500;
+      color: #4a5568;
+      font-size: 0.9rem;
+    }
+
+    nb-alert {
+      margin-bottom: 1rem;
+    }
+
+    button[nbButton] {
+      margin-top: 0.5rem;
+      font-weight: 600;
+      letter-spacing: 0.3px;
     }
   `]
 })
@@ -96,6 +137,7 @@ export class LoginComponent {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
 
   constructor() {
     this.loginForm = this.fb.group({
@@ -112,9 +154,10 @@ export class LoginComponent {
         next: () => {
           this.router.navigate(['/dashboard']);
         },
-        error: (err) => {
+        error: () => {
           this.isLoading = false;
           this.errorMessage = 'Identifiants incorrects. Veuillez réessayer.';
+          this.cdr.markForCheck();
         }
       });
     }

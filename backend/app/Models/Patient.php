@@ -13,7 +13,8 @@ class Patient extends Model
         'date_naissance',
         'sexe',
         'telephone',
-        'email'
+        'email',
+        'antecedents_medicaux'
     ];
 
     public function medecin()
@@ -21,10 +22,6 @@ class Patient extends Model
         return $this->belongsTo(Medecin::class);
     }
 
-    public function constantes()
-    {
-        return $this->hasMany(ConstanteVitale::class);
-    }
 
     public function alertes()
     {

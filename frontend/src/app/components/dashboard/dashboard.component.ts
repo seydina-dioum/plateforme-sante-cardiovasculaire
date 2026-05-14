@@ -1,155 +1,264 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
-import { BaseChartDirective } from 'ng2-charts';
-import { ChartConfiguration, ChartOptions } from 'chart.js';
+import { RouterModule } from '@angular/router';
+import { PatientService } from '../../services/patient.service';
+import { AlerteService } from '../../services/alerte.service';
+import { NbCardModule, NbIconModule, NbBadgeModule } from '@nebular/theme';
+import { HighchartsChartComponent } from 'highcharts-angular';
+import * as Highcharts from 'highcharts';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, BaseChartDirective],
+  imports: [CommonModule, RouterModule, NbCardModule, NbIconModule, NbBadgeModule, HighchartsChartComponent],
   template: `
-    <div class="dashboard">
-      <nav class="sidebar">
-        <div class="sidebar-header">
-          <h2>CardioHealth</h2>
-          <p>Espace Médecin</p>
-        </div>
-        <ul class="nav-links">
-          <li class="active"><a href="#">Vue d'ensemble</a></li>
-          <li><a href="#">Patients</a></li>
-          <li><a href="#">Alertes <span class="badge">3</span></a></li>
-        </ul>
-        <div class="sidebar-footer">
-          <button (click)="logout()" class="btn-logout">Déconnexion</button>
-        </div>
-      </nav>
-      
-      <main class="main-content">
-        <header class="topbar">
-          <h1>Tableau de bord : Suivi Cardiovasculaire</h1>
-          <div class="user-info">
-            Dr. Doucouré
-          </div>
-        </header>
-
-        <section class="stats-grid">
-          <div class="stat-card">
-            <h3>Patients suivis</h3>
-            <div class="value">124</div>
-          </div>
-          <div class="stat-card">
-            <h3>Alertes critiques</h3>
-            <div class="value text-danger">3</div>
-          </div>
-          <div class="stat-card">
-            <h3>Risque élevé</h3>
-            <div class="value text-warning">12</div>
-          </div>
-        </section>
-
-        <section class="charts-section">
-          <div class="chart-container">
-            <h3>Répartition des Niveaux de Risque</h3>
-            <div style="display: block;">
-              <canvas baseChart
-                [data]="pieChartData"
-                [options]="pieChartOptions"
-                [type]="'pie'">
-              </canvas>
-            </div>
-          </div>
-          
-          <div class="chart-container">
-            <h3>Évolution Moyenne de la Pression Artérielle</h3>
-            <div style="display: block;">
-              <canvas baseChart
-                [data]="lineChartData"
-                [options]="lineChartOptions"
-                [type]="'line'">
-              </canvas>
-            </div>
-          </div>
-        </section>
-      </main>
+    <div class="page-header">
+      <h1>Tableau de bord</h1>
+      <p class="subtitle">Suivi cardiovasculaire en temps réel</p>
     </div>
+
+    <!-- Stat cards -->
+    <section class="stats-row">
+      <nb-card class="stat-card">
+        <nb-card-body>
+          <div class="stat-icon patients-icon">
+            <nb-icon icon="people-outline"></nb-icon>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value">{{ patientCount }}</span>
+            <span class="stat-label">Patients suivis</span>
+          </div>
+        </nb-card-body>
+      </nb-card>
+
+      <nb-card class="stat-card">
+        <nb-card-body>
+          <div class="stat-icon danger-icon">
+            <nb-icon icon="alert-triangle-outline"></nb-icon>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value danger">{{ alerteCritiqueCount }}</span>
+            <span class="stat-label">Alertes critiques</span>
+          </div>
+        </nb-card-body>
+      </nb-card>
+
+      <nb-card class="stat-card">
+        <nb-card-body>
+          <div class="stat-icon warning-icon">
+            <nb-icon icon="bell-outline"></nb-icon>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value warning">{{ alerteUnreadCount }}</span>
+            <span class="stat-label">Alertes non lues</span>
+          </div>
+        </nb-card-body>
+      </nb-card>
+
+      <nb-card class="stat-card">
+        <nb-card-body>
+          <div class="stat-icon success-icon">
+            <nb-icon icon="checkmark-circle-outline"></nb-icon>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value success">{{ alerteReadCount }}</span>
+            <span class="stat-label">Alertes traitées</span>
+          </div>
+        </nb-card-body>
+      </nb-card>
+    </section>
+
+    <!-- Charts -->
+    <section class="charts-row">
+      <nb-card>
+        <nb-card-header>Répartition des Niveaux de Risque</nb-card-header>
+        <nb-card-body>
+          <highcharts-chart
+            [options]="pieOptions"
+            style="width: 100%; display: block;">
+          </highcharts-chart>
+        </nb-card-body>
+      </nb-card>
+
+      <nb-card>
+        <nb-card-header>Évolution de la Pression Artérielle</nb-card-header>
+        <nb-card-body>
+          <highcharts-chart
+            [options]="lineOptions"
+            style="width: 100%; display: block;">
+          </highcharts-chart>
+        </nb-card-body>
+      </nb-card>
+    </section>
   `,
   styles: [`
-    .dashboard { display: flex; height: 100vh; background-color: #f8f9fa; font-family: 'Inter', sans-serif; }
-    .sidebar { width: 250px; background-color: #2c3e50; color: white; display: flex; flex-direction: column; }
-    .sidebar-header { padding: 2rem 1.5rem; border-bottom: 1px solid #34495e; }
-    .sidebar-header h2 { margin: 0; font-size: 1.5rem; }
-    .sidebar-header p { margin: 0; color: #adb5bd; font-size: 0.9rem; }
-    .nav-links { list-style: none; padding: 0; margin: 2rem 0; flex-grow: 1; }
-    .nav-links li { padding: 0.8rem 1.5rem; }
-    .nav-links li.active { background-color: #34495e; border-left: 4px solid #3498db; }
-    .nav-links a { color: white; text-decoration: none; display: flex; justify-content: space-between; }
-    .badge { background: #e74c3c; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem; }
-    .sidebar-footer { padding: 1.5rem; }
-    .btn-logout { width: 100%; padding: 0.8rem; background: #c0392b; color: white; border: none; border-radius: 4px; cursor: pointer; }
-    .main-content { flex-grow: 1; display: flex; flex-direction: column; overflow-y: auto; }
-    .topbar { background: white; padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-    .topbar h1 { margin: 0; font-size: 1.5rem; color: #2c3e50; }
-    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; padding: 2rem; }
-    .stat-card { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-    .stat-card h3 { margin: 0 0 1rem 0; color: #7f8c8d; font-size: 1rem; }
-    .stat-card .value { font-size: 2.5rem; font-weight: bold; color: #2c3e50; }
-    .text-danger { color: #e74c3c !important; }
-    .text-warning { color: #f39c12 !important; }
-    .charts-section {
+    .page-header {
+      margin-bottom: 1.5rem;
+    }
+    .page-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #1e3a5f;
+      margin: 0;
+    }
+    .subtitle {
+      color: #718096;
+      font-size: 0.9rem;
+      margin: 0.2rem 0 0;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-card {
+      border-radius: 12px !important;
+      border: none !important;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06) !important;
+    }
+
+    .stat-card nb-card-body {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.25rem !important;
+    }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+    }
+
+    .patients-icon { background: #e8f0fe; color: #4a90d9; }
+    .danger-icon { background: #fdecea; color: #e74c3c; }
+    .warning-icon { background: #fff3e0; color: #f5a623; }
+    .success-icon { background: #e6f9f0; color: #36b37e; }
+
+    .stat-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #1e3a5f;
+      line-height: 1;
+    }
+    .stat-value.danger { color: #e74c3c; }
+    .stat-value.warning { color: #f5a623; }
+    .stat-value.success { color: #36b37e; }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: #718096;
+      margin-top: 0.25rem;
+    }
+
+    .charts-row {
       display: grid;
       grid-template-columns: 1fr 2fr;
-      gap: 1.5rem;
-      padding: 0 2rem 2rem 2rem;
+      gap: 1rem;
     }
-    .chart-container {
-      background: white;
-      padding: 1.5rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+
+    .charts-row nb-card {
+      border-radius: 12px !important;
+      border: none !important;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06) !important;
     }
-    .chart-container h3 { margin-top: 0; color: #2c3e50; }
+
+    nb-card-header {
+      font-weight: 600 !important;
+      color: #1e3a5f !important;
+      font-size: 0.95rem !important;
+    }
   `]
 })
 export class DashboardComponent implements OnInit {
-  private authService = inject(AuthService);
-  private router = inject(Router);
+  private patientService = inject(PatientService);
+  private alerteService = inject(AlerteService);
+  private cdr = inject(ChangeDetectorRef);
 
-  // Données pour le Pie Chart
-  public pieChartOptions: ChartOptions<'pie'> = {
-    responsive: true,
-  };
-  public pieChartData: ChartConfiguration<'pie'>['data'] = {
-    labels: [ 'Faible', 'Modéré', 'Élevé' ],
-    datasets: [ {
-      data: [ 80, 32, 12 ],
-      backgroundColor: ['#2ecc71', '#f1c40f', '#e74c3c']
-    } ]
-  };
+  patientCount = 0;
+  alerteCritiqueCount = 0;
+  alerteUnreadCount = 0;
+  alerteReadCount = 0;
 
-  // Données pour le Line Chart
-  public lineChartOptions: ChartOptions<'line'> = {
-    responsive: true,
-  };
-  public lineChartData: ChartConfiguration<'line'>['data'] = {
-    labels: [ 'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil' ],
-    datasets: [
-      {
-        data: [ 120, 122, 121, 125, 124, 128, 130 ],
-        label: 'Pression Systolique Moyenne (mmHg)',
-        fill: true,
-        tension: 0.5,
-        borderColor: '#e74c3c',
-        backgroundColor: 'rgba(231,76,60,0.3)'
+  pieOptions: Highcharts.Options = {
+    chart: { type: 'pie', backgroundColor: 'transparent', height: 280 },
+    title: { text: '' },
+    credits: { enabled: false },
+    plotOptions: {
+      pie: {
+        innerSize: '55%',
+        borderWidth: 0,
+        dataLabels: { enabled: true, format: '{point.name}: {point.y}', style: { fontSize: '12px', color: '#718096' } }
       }
-    ]
+    },
+    series: [{
+      type: 'pie',
+      name: 'Patients',
+      data: [
+        { name: 'Faible', y: 80, color: '#36b37e' },
+        { name: 'Modéré', y: 32, color: '#f5a623' },
+        { name: 'Élevé', y: 12, color: '#e74c3c' }
+      ]
+    }]
   };
 
-  ngOnInit(): void {}
+  lineOptions: Highcharts.Options = {
+    chart: { type: 'areaspline', backgroundColor: 'transparent', height: 280 },
+    title: { text: '' },
+    credits: { enabled: false },
+    xAxis: {
+      categories: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil'],
+      lineColor: '#e2e8f0',
+      labels: { style: { color: '#718096' } }
+    },
+    yAxis: {
+      title: { text: 'mmHg', style: { color: '#718096' } },
+      gridLineColor: '#f0f0f0',
+      labels: { style: { color: '#718096' } }
+    },
+    plotOptions: {
+      areaspline: { fillOpacity: 0.15 }
+    },
+    series: [{
+      type: 'areaspline',
+      name: 'Pression Systolique',
+      data: [120, 122, 121, 125, 124, 128, 130],
+      color: '#4a90d9',
+      fillColor: {
+        linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+        stops: [[0, 'rgba(74, 144, 217, 0.3)'], [1, 'rgba(74, 144, 217, 0.02)']]
+      },
+      marker: { radius: 4, fillColor: '#4a90d9' }
+    }]
+  };
 
-  logout() {
-    this.authService.logout();
-    this.router.navigate(['/login']);
+  ngOnInit(): void {
+    this.patientService.getPatients().subscribe({
+      next: (patients) => {
+        this.patientCount = patients.length;
+        this.cdr.markForCheck();
+      }
+    });
+
+    this.alerteService.getAlertes().subscribe({
+      next: (alertes) => {
+        this.alerteUnreadCount = alertes.filter(a => !a.lue).length;
+        this.alerteCritiqueCount = alertes.filter(a => a.niveau === 'critique').length;
+        this.alerteReadCount = alertes.filter(a => a.lue).length;
+        this.cdr.markForCheck();
+      }
+    });
   }
 }
