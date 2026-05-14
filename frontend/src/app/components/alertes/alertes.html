@@ -1,0 +1,91 @@
+<div class="page-header">
+  <h1>Alertes</h1>
+  <p class="subtitle">Surveillance des événements cardiovasculaires</p>
+</div>
+
+<!-- Summary cards -->
+<section class="summary-row">
+  <nb-card class="summary-card critique">
+    <nb-card-body>
+      <div class="summary-icon">
+        <nb-icon icon="alert-triangle-outline"></nb-icon>
+      </div>
+      <div class="summary-info">
+        <span class="summary-count">{{ alertesCritiques.length }}</span>
+        <span class="summary-label">Critiques</span>
+      </div>
+    </nb-card-body>
+  </nb-card>
+
+  <nb-card class="summary-card warning">
+    <nb-card-body>
+      <div class="summary-icon">
+        <nb-icon icon="alert-circle-outline"></nb-icon>
+      </div>
+      <div class="summary-info">
+        <span class="summary-count">{{ alertesWarning.length }}</span>
+        <span class="summary-label">Attention</span>
+      </div>
+    </nb-card-body>
+  </nb-card>
+
+  <nb-card class="summary-card info">
+    <nb-card-body>
+      <div class="summary-icon">
+        <nb-icon icon="info-outline"></nb-icon>
+      </div>
+      <div class="summary-info">
+        <span class="summary-count">{{ alertesInfo.length }}</span>
+        <span class="summary-label">Informations</span>
+      </div>
+    </nb-card-body>
+  </nb-card>
+</section>
+
+<!-- Alert list -->
+<nb-card class="alertes-card">
+  <nb-card-header>
+    <span>Toutes les alertes ({{ alertes.length }})</span>
+  </nb-card-header>
+  <nb-card-body>
+    <div *ngIf="loading" class="loading-state">
+      <nb-spinner status="primary" size="large"></nb-spinner>
+    </div>
+
+    <div *ngIf="!loading && alertes.length === 0" class="empty-state">
+      Aucune alerte pour le moment.
+    </div>
+
+    <div *ngFor="let alerte of alertes" class="alerte-row" [class.unread]="!alerte.lue"
+         [class.critique]="alerte.niveau === 'critique'"
+         [class.warning]="alerte.niveau === 'warning'"
+         [class.info]="alerte.niveau === 'info'">
+      <div class="alerte-badge-col">
+        <span class="niveau-pill" [class]="'pill-' + alerte.niveau">
+          {{ getNiveauLabel(alerte.niveau) }}
+        </span>
+      </div>
+      <div class="alerte-content">
+        <p class="alerte-message">{{ alerte.message }}</p>
+        <p class="alerte-meta">
+          <span *ngIf="alerte.patient" class="patient-link">
+            <nb-icon icon="person-outline"></nb-icon>
+            {{ alerte.patient.prenom }} {{ alerte.patient.nom }}
+          </span>
+          <span class="alerte-date">
+            <nb-icon icon="clock-outline"></nb-icon>
+            {{ alerte.declenchee_a | date:'dd/MM/yyyy HH:mm' }}
+          </span>
+        </p>
+      </div>
+      <div class="alerte-actions">
+        <button *ngIf="!alerte.lue" nbButton ghost status="success" size="small" (click)="markAsRead(alerte)" nbTooltip="Marquer comme lue">
+          <nb-icon icon="checkmark-outline"></nb-icon>
+        </button>
+        <button nbButton ghost status="danger" size="small" (click)="deleteAlerte(alerte.id!)" nbTooltip="Supprimer">
+          <nb-icon icon="trash-2-outline"></nb-icon>
+        </button>
+      </div>
+    </div>
+  </nb-card-body>
+</nb-card>

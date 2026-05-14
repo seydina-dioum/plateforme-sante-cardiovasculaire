@@ -3,8 +3,9 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\DossierPatientController;
+use App\Http\Controllers\PatientController;
 use App\Http\Controllers\VitalSignController;
+use App\Http\Controllers\AlerteController;
 
 // Routes publiques
 Route::post('/register', [AuthController::class, 'register']);
@@ -18,11 +19,14 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
 
-    // CRUD dossiers patients
-    Route::apiResource('dossiers-patients', DossierPatientController::class);
+    // CRUD patients
+    Route::apiResource('patients', PatientController::class);
 
     // Constantes vitales
     Route::apiResource('vital-signs', VitalSignController::class);
     Route::get('patients/{patient}/vital-signs', [VitalSignController::class, 'patientVitalSigns']);
     Route::get('patients/{patient}/vital-signs/latest/{limit}', [VitalSignController::class, 'patientLatestVitalSigns']);
+
+    // Alertes
+    Route::apiResource('alertes', AlerteController::class);
 });

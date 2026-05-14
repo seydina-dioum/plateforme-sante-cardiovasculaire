@@ -1,1 +1,78 @@
-/* You can add global styles to this file, and also import other style files */
+@import '@nebular/theme/styles/prebuilt/corporate.css';
+
+/* ===== CardioHealth Global Theme — White + Light Blue ===== */
+
+:root {
+  --ch-primary: #4a90d9;
+  --ch-primary-light: #e8f0fe;
+  --ch-primary-dark: #2c6fbd;
+  --ch-accent: #36b37e;
+  --ch-danger: #e74c3c;
+  --ch-warning: #f5a623;
+  --ch-bg: #ffffff;
+  --ch-bg-alt: #f4f7fc;
+  --ch-text: #2d3748;
+  --ch-text-light: #718096;
+  --ch-border: #e2e8f0;
+  --ch-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --ch-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.03);
+  --ch-radius: 12px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--ch-bg);
+  color: var(--ch-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Override Nebular theme colors */
+nb-layout {
+  --layout-background-color: var(--ch-bg) !important;
+}
+
+nb-sidebar {
+  --sidebar-background-color: #1e3a5f !important;
+  --sidebar-text-color: #ffffff !important;
+}
+
+nb-menu {
+  --menu-text-color: rgba(255, 255, 255, 0.8) !important;
+  --menu-active-text-color: #ffffff !important;
+  --menu-item-hover-background-color: rgba(255, 255, 255, 0.08) !important;
+  --menu-active-background-color: rgba(74, 144, 217, 0.2) !important;
+  --menu-icon-color: rgba(255, 255, 255, 0.6) !important;
+  --menu-active-icon-color: #4a90d9 !important;
+}
+
+/* Global card styles */
+.ch-card {
+  background: var(--ch-bg);
+  border-radius: var(--ch-radius);
+  box-shadow: var(--ch-shadow);
+  border: 1px solid var(--ch-border);
+  padding: 1.5rem;
+  transition: box-shadow 0.2s ease;
+}
+
+.ch-card:hover {
+  box-shadow: var(--ch-shadow-md);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #c4cdd5;
+  border-radius: 3px;
+}

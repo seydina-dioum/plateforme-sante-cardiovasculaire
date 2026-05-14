@@ -12,13 +12,14 @@ return new class extends Migration {
     {
         Schema::create('patients', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('medecin_id')->constrained('medecins')->onDelete('cascade');
+            $table->foreignId('medecin_id')->nullable()->constrained('medecins')->onDelete('cascade');
             $table->string('nom');
             $table->string('prenom');
             $table->date('date_naissance');
             $table->enum('sexe', ['M', 'F']);
             $table->string('telephone')->nullable();
-            $table->string('email')->unique();
+            $table->string('email')->unique()->nullable();
+            $table->text('antecedents_medicaux')->nullable();
             $table->timestamps();
         });
     }

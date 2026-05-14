@@ -1,0 +1,100 @@
+.page-header { margin-bottom: 1.5rem; }
+.page-header h1 { font-size: 1.6rem; font-weight: 700; color: #1e3a5f; margin: 0; }
+.subtitle { color: #718096; font-size: 0.9rem; margin: 0.2rem 0 0; }
+
+.summary-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.summary-card {
+  border-radius: 12px !important;
+  border: none !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06) !important;
+  border-left: 4px solid #ddd !important;
+}
+.summary-card.critique { border-left-color: #e74c3c !important; }
+.summary-card.warning { border-left-color: #f5a623 !important; }
+.summary-card.info { border-left-color: #4a90d9 !important; }
+
+.summary-card nb-card-body {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem !important;
+}
+
+.summary-icon {
+  width: 44px; height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+.critique .summary-icon { background: #fdecea; color: #e74c3c; }
+.warning .summary-icon { background: #fff3e0; color: #f5a623; }
+.info .summary-icon { background: #e8f0fe; color: #4a90d9; }
+
+.summary-count { font-size: 1.8rem; font-weight: 700; color: #1e3a5f; line-height: 1; }
+.summary-label { font-size: 0.85rem; color: #718096; margin-top: 0.15rem; }
+.summary-info { display: flex; flex-direction: column; }
+
+.alertes-card {
+  border-radius: 12px !important;
+  border: none !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06) !important;
+}
+
+.alertes-card nb-card-header {
+  font-weight: 600 !important;
+  color: #1e3a5f !important;
+}
+
+.loading-state, .empty-state {
+  text-align: center;
+  padding: 2rem;
+  color: #718096;
+}
+
+.alerte-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.15s;
+}
+.alerte-row:last-child { border-bottom: none; }
+.alerte-row:hover { background: #f8fafc; border-radius: 8px; margin: 0 -0.5rem; padding-left: 0.5rem; padding-right: 0.5rem; }
+.alerte-row.unread { background: #fefce8; }
+
+.niveau-pill {
+  display: inline-block;
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  min-width: 80px;
+  text-align: center;
+}
+.pill-critique { background: #fdecea; color: #e74c3c; }
+.pill-warning { background: #fff3e0; color: #f5a623; }
+.pill-info { background: #e8f0fe; color: #4a90d9; }
+
+.alerte-content { flex: 1; }
+.alerte-message { margin: 0 0 0.3rem; font-weight: 500; color: #2d3748; font-size: 0.93rem; }
+.alerte-meta {
+  margin: 0;
+  font-size: 0.82rem;
+  color: #718096;
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+.alerte-meta nb-icon { font-size: 0.85rem; margin-right: 0.2rem; }
+.patient-link { font-weight: 500; display: flex; align-items: center; }
+.alerte-date { display: flex; align-items: center; }
+.alerte-actions { display: flex; gap: 0.25rem; }
